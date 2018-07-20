@@ -2,7 +2,7 @@ import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, SessionNotCreatedException
 from time import sleep
 import json
 import datetime
@@ -14,8 +14,17 @@ if __name__ == "__main__":
     end = datetime.datetime(2018, 7, 1)  # year, month, day
 
     # only edit these if you're having problems
-    delay = 1  # time to wait on each page load before reading the page
-    driver = webdriver.Safari()  # options are Chrome() Firefox() Safari()
+    delay = 0.88  # time to wait on each page load before reading the page
+    instantiated = False
+    i = 0
+    while not instantiated:
+        i += 1
+        try:
+            driver = webdriver.Safari()  # options are Chrome() Firefox() Safari()
+            instantiated = True
+        except SessionNotCreatedException:
+            sleep(15)
+            print("Unsuccessful driver instantiation # "+str(i)+" for this user.")
 
 
     # don't mess with this stuff
