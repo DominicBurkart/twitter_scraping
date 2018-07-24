@@ -1,9 +1,15 @@
 # ran on july 10th 10:32 ET
 
-import os
+# ran again on july 20th 9:50 am.
+
+# and again july 24th 10:00pm et.
+
 import subprocess
+import time
 
 targets = [
+    "hillaryclinton",
+    "realdonaldtrump",
     "SenBillNelson",
     "dickdurbin",
     "BillPascrell",
@@ -15,8 +21,6 @@ targets = [
     "WarrenDavidson",
     "BetoORourke",
     "MikeCapuano",
-    "hillaryclinton",
-    "realdonaldtrump",
     "RandPaul",
     "ChrisMurphyCT",
     "JohnCornyn",
@@ -50,4 +54,11 @@ targets = [
 ]
 
 for t in targets:
-    subprocess.run("python3 scrape.py " + t, shell= True)
+    resp = 1
+    i = 1
+    while resp != 0:
+        resp = subprocess.run("python3 scrape.py " + t, shell=True).returncode
+        if resp != 0:
+            print("Failed with user " + t + ". Restarting user for the " + str(i) + "th time.")
+            time.sleep(15)
+            i += 1
