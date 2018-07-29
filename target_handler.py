@@ -6,6 +6,7 @@
 
 import subprocess
 import time
+import os
 
 targets = [
     "hillaryclinton",
@@ -53,11 +54,28 @@ targets = [
     "ScottPeters"
 ]
 
+targets = [
+    "JoaquinCastrotx",
+    "davidcicilline",
+    "LaMalfa",
+    "Rohrabacher",
+    "_Hunter",
+    "BetoORourke"
+]
+
+
+wd = os.path.abspath(os.curdir)
 for t in targets:
     resp = 1
     i = 1
+    d = os.path.join(wd, t)
+    try:
+        os.mkdir(d)
+    except FileExistsError:
+        pass
     while resp != 0:
-        resp = subprocess.run("python3 scrape.py " + t, shell=True).returncode
+        resp = subprocess.run("cd " + d + ";\npython3 ../scrape.py " + t + ";\npython3 ../get_metadata.py",
+                              shell=True).returncode
         if resp != 0:
             print("Failed with user " + t + ". Restarting user for the " + str(i) + "th time.")
             time.sleep(15)

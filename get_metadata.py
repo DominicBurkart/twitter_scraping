@@ -1,17 +1,14 @@
 import tweepy
 import json
 import math
-import glob
 import csv
 import zipfile
-import zlib
-from tweepy import TweepError
 from time import sleep
 
 # CHANGE THIS TO THE USER YOU WANT
 user = 'all_users'
 
-with open('api_keys.json') as f:
+with open('../api_keys.json') as f:
     keys = json.load(f)
 
 auth = tweepy.OAuthHandler(keys['consumer_key'], keys['consumer_secret'])
