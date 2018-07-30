@@ -14,13 +14,13 @@ if __name__ == "__main__":
     end = datetime.datetime(2018, 7, 1)  # year, month, day
 
     # only edit these if you're having problems
-    delay = 0.4  # time to wait on each page load before reading the page
+    delay = 0.3  # time to wait on each page load before reading the page
     instantiated = False
     i = 0
     while not instantiated:
         i += 1
         try:
-            driver = webdriver.Safari()  # options are Chrome() Firefox() Safari()
+            driver = webdriver.Chrome(executable_path="../chromedriver")  # options are Chrome() Firefox() Safari()
             instantiated = True
         except SessionNotCreatedException:
             sleep(15)
@@ -50,39 +50,36 @@ if __name__ == "__main__":
         return date + datetime.timedelta(days=i)
 
     for day in range(days):
-        complete = False
-        while not complete:
-            d1 = format_day(increment_day(start, 0))
-            d2 = format_day(increment_day(start, 1))
-            url = form_url(d1, d2)
-            print(url)
-            print(d1)
-            driver.get(url)
-            sleep(delay)
+        d1 = format_day(increment_day(start, 0))
+        d2 = format_day(increment_day(start, 1))
+        url = form_url(d1, d2)
+        print(url)
+        print(d1)
+        driver.get(url)
+        sleep(delay)
 
-            try:
+        try:
+            found_tweets = driver.find_elements_by_css_selector(tweet_selector)
+            increment = 10
+
+            while len(found_tweets) >= increment:
+                print('scrolling down to load more tweets')
+                driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+                sleep(delay)
                 found_tweets = driver.find_elements_by_css_selector(tweet_selector)
-                increment = 10
+                increment += 10
 
-                while len(found_tweets) >= increment:
-                    print('scrolling down to load more tweets')
-                    driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
-                    sleep(delay)
-                    found_tweets = driver.find_elements_by_css_selector(tweet_selector)
-                    increment += 10
+            print('{} tweets found, {} total'.format(len(found_tweets), len(ids)))
 
-                print('{} tweets found, {} total'.format(len(found_tweets), len(ids)))
+            for tweet in found_tweets:
+                try:
+                    id = tweet.find_element_by_css_selector(id_selector).get_attribute('href').split('/')[-1]
+                    ids.append(id)
+                except StaleElementReferenceException as e:
+                    print('lost element reference', tweet)
 
-                for tweet in found_tweets:
-                    try:
-                        id = tweet.find_element_by_css_selector(id_selector).get_attribute('href').split('/')[-1]
-                        ids.append(id)
-                    except StaleElementReferenceException as e:
-                        print('lost element reference', tweet)
-                complete = True
-
-            except NoSuchElementException:
-                print('no tweets on this day')
+        except NoSuchElementException:
+            print('no tweets on this day')
 
         start = increment_day(start, 1)
 

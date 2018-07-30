@@ -63,6 +63,12 @@ targets = [
     "BetoORourke"
 ]
 
+targets = [
+    "RepLaMalfa",
+    "DanaRohrabacher",
+    "Rep_Hunter"
+]
+
 
 wd = os.path.abspath(os.curdir)
 for t in targets:
